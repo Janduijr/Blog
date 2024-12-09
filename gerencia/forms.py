@@ -45,3 +45,8 @@ class NoticiaFilterForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
   
+class categoriaform(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = "__all__"
+    

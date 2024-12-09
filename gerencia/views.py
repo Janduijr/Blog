@@ -3,7 +3,7 @@ from .forms import NoticiaForm, NoticiaFilterForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .models import Noticia, Categoria
-
+from .forms import categoriaform
 # Create your views here.
 @login_required
 def inicio_gerencia(request):
@@ -89,3 +89,47 @@ def index(request):
         'search_query': search_query,
     }
     return render(request, 'gerencia/index.html', contexto)
+
+@login_required
+def listar_categoria(request):
+    query = request.GET.get('q')
+    if query:
+        categorias = Categoria.objects.filter(nome__icontains=query)
+    else:
+        categorias = Categoria.objects.all()
+    contexto = {
+        'categorias':categorias
+    }
+    return render(request, 'gerencia/listar_categoria.html',contexto)
+
+def criar_categoria(request):
+    form = categoriaform()
+    if request.method == 'POST':
+        form = categoriaform(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('gerencia:listar_categoria')
+    contexto={
+        'form':form
+    }
+    return render(request, 'gerencia/criar_categoria.html',contexto)
+
+def editar_categoria(request,id):
+    categorias = Categoria.objects.get(id=id)
+    if request.method == 'POST':
+        form = categoriaform(request.POST, instance=categorias)
+        if form.is_valid():
+            form.save()
+            return redirect('gerencia:listar_categoria')
+    else:
+        form = categoriaform(instance=categorias)
+    contexto={
+        'form':form
+    }
+    return render(request, 'gerencia/editar_categoria.html',contexto)
+
+def deletar_categoria(request,id):
+    categorias = Categoria.objects.get(id=id)
+    categorias.delete()
+    return redirect('gerencia:listar_categoria')
+    

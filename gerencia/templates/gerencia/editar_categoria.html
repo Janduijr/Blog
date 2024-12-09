@@ -1,0 +1,10 @@
+{% extends 'base_gerencia.html' %}
+
+{%block main%}
+<form method='POST'>
+    {% csrf_token %}
+    {{form.nome}}
+    <button type='submit'>Editar</button>
+
+</form>
+{%endblock%}
